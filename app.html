@@ -1,0 +1,130 @@
+<!DOCTYPE html> 
+<html> 
+<head> 
+   <title>Energy Introspector</title>
+   <meta name="viewport" content="width=device-width, initial-scale=1"> 
+   <script src="lib/protovis.js" type="text/javascript"></script>
+   <script src="lib/jquery-1.7.1.min.js" type="text/javascript"></script>
+   <script src="lib/jquery.mobile-1.1.0.min.js" type="text/javascript"></script>
+   <script src="main.js" type="text/javascript"></script>
+   <link rel="stylesheet" href="css/jquery.mobile-1.1.0.min.css" />
+   <link rel="stylesheet" href="css/default.css" />
+</head> 
+<body onload="startup();">
+<div data-role="page">
+   
+<!-- HEADER BAR -->
+<div data-role="header" data-position="inline">
+	<h1>Energy Introspector</h1>
+</div>
+
+<!-- PAGE CONTENT (gets replaced via AJAX for page transitions) -->
+<div data-role="content" style="padding-top: 0px;">
+   
+<!-- MAIN TABLE -->
+<table class="maintable">
+   <tr>
+      <td class="leftcol">
+         <h3 style="margin-top: 15px; margin-bottom: 5px;">Electricity Consumption (Watts)</h3>
+         
+         <div class="ui-grid-b">
+            
+            <!-- DATE NAVIGATION WIDGET -->
+            <div class="ui-block-a">
+               <a href="#" data-ajax="false" data-inline="true" data-role="button" data-icon="arrow-l" data-iconpos="notext" style="margin-right: 0px;" onclick="return prevScreen();">Prev</a>
+               <a href="#" data-ajax="false" data-inline="true" data-role="button" data-mini="true" onclick="return todayScreen();">Today</a>
+               <a href="#" data-ajax="false" data-inline="true" data-role="button" data-icon="arrow-r" data-iconpos="notext" style="margin-left: 0px;" onclick="return nextScreen();">Next</a>
+            </div>
+            
+            <!-- CURRENT DATE -->
+            <div class="ui-block-b" style="text-align: center;">
+               <span style="position: relative; top: 12px;" id="currdate"></span>
+            </div>
+            
+            <!-- VIEW SELECTOR -->
+            <div class="ui-block-c" style="text-align: center;">
+               <span data-role="controlgroup" data-type="horizontal">
+                  <a href="index.html" data-mini="true" data-role="button" style="margin-top: 5px;">Month</a>
+                  <a href="index.html" data-mini="true" data-role="button" style="margin-top: 5px;">Week</a>
+                  <a href="index.html" data-mini="true" data-role="button" style="margin-top: 5px;" data-theme="b">Day</a>
+               </span>
+            </div>
+            
+         </div><!-- /grid-a -->
+      </td>
+      
+      <!-- RIGHT COLUMN (CURRENT RATES) -->
+      <td rowspan="3" class="rightcol">
+         
+         <!-- SPINNING FLOWER -->
+         <img src="images/flower.png" id="flower" style="margin-top: 20px;"/>
+         <div class="info" style="border: none; margin-top: 5px;">Current Rate:</div>
+         <div class="ratebox">
+            <div class="meter" id="currwatts">1000</div>
+            <div class="units">watts</div>
+         </div>
+         <div class="ratebox">
+            <div class="meter" id="currcost">$100</div>
+            <div class="units">per month</div>
+         </div>
+         <div class="info">Today so far:</div>
+         <div class="ratebox">
+            <div class="meter" id="daykwh">12</div>
+            <div class="units">kWh</div>
+            <div class="meter" id="daycost">$12</div>
+         </div>
+         <div class="info">This week so far:</div>
+         <div class="ratebox">
+            <div class="meter" id="weekkwh">120</div>
+            <div class="units">kWh</div>
+            <div class="meter" id="weekcost">$60</div>
+         </div>
+         <div class="info">This month so far:</div>
+         <div class="ratebox">
+            <div class="meter" id="monthkwh">300</div>
+            <div class="units">kWh</div>
+            <div class="meter" id="monthcost">$123</div>
+         </div>
+      </td>
+   </tr>
+   
+   <tr>
+      <td class="visbox">
+         <script type="text/javascript">
+createVis();
+changeScreen();
+         </script>
+      </td>
+   </tr>
+
+   <tr>
+      <td style="text-align: center; background-color: #333;">
+         <table>
+            <tr>
+               <td class="meterbtn_on" onclick="toggleMeter(this,0);"><img src="images/house.png" width="30px" height="30px" /><br>House</td>
+               <td class="meterbtn_off" onclick="toggleMeter(this,1);"><img src="images/socket.png" width="30px" height="30px" /><br>Meter 1</td>
+               <td class="meterbtn_off" onclick="toggleMeter(this,2);"><img src="images/computer.png" width="30px" height="30px" /><br>Computer</td>
+               <td class="meterbtn_off" onclick="toggleMeter(this,3);"><img src="images/refrigerator.png" width="30px" height="30px" /><br>Refrigerator</td>
+               <td class="meterbtn_off" onclick="toggleMeter(this,4);"><img src="images/fan.png" width="30px" height="30px" /><br>Fan</td>
+               <td class="meterbtn_off" onclick="toggleMeter(this,5);"><img src="images/tv.png" width="30px" height="30px" /><br>TV + DVR</td>
+               <td><a href="#" data-mini="true" data-role="button" data-icon="gear" data-theme="a" onclick="toggleMeter(0); return false;">Setup Meters</a>
+            </tr>
+         </table>
+         <!--
+         <span data-role="controlgroup" data-type="horizontal">
+            
+            <a href="#" data-mini="true" data-role="button" onclick="toggleMeter(1); return false;">Socket 1</a>
+            <a href="#" data-mini="true" data-role="button" onclick="toggleMeter(2); return false;">Socket 2</a>
+            <a href="#" data-mini="true" data-role="button" onclick="toggleMeter(3); return false;"data-theme="b">Socket 3</a>
+            <a href="#" data-mini="true" data-role="button" onclick="toggleMeter(4); return false;">Socket 4</a>
+            <a href="#" data-mini="true" data-role="button" onclick="toggleMeter(5); return false;">Socket 5</a>
+         </span>
+         -->
+      </td>
+   </tr>
+</table>
+   
+</div> <!-- content -->
+</div> <!-- page -->
+</body>
+</html>
